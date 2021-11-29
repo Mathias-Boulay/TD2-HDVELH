@@ -17,47 +17,67 @@ public class Event extends NodeMultiple {
 	public static final String ERROR_MSG_UNEXPECTED_END = "Sorry, for some unexpected reason the story ends here...";
 	public static final String PROMPT_ANSWER = "Answer: ";
 	public static final String WARNING_MSG_INTEGER_EXPECTED = "Please input a integer within range!";
+	private static int nextEventID = 0; // Increment the ID to keep them unique when a new event is instantiated
+	
+	private int Id;
+	private String playerAnswer;
+	private int chosenPath;
+	private Scanner reader = null; //Don't ask the logic behind the naming, thanks.	
+	private GUIManager guiManager = null;
+	
+	// Default constructor, default GUI.
+	public Event() {
+		this(new GUIManager(), null);
+	}
+	
+	public Event(GUIManager guiManager, String data) {
+		super(data); 
+		this.guiManager = guiManager;
+		this.reader = guiManager.getInputReader();
+		Id = nextEventID;
+		nextEventID += 1;
+	}
 
 	/**
 	 * @return the playerAnswer
 	 */
 	public String getPlayerAnswer() {
-		/* TO BE COMPLETED */
+		return playerAnswer;
 	}
 
 	/**
 	 * @param playerAnswer the playerAnswer to set
 	 */
 	public void setPlayerAnswer(String playerAnswer) {
-		/* TO BE COMPLETED */
+		this.playerAnswer = playerAnswer;
 	}
 
 	/**
 	 * @return the reader
 	 */
 	public Scanner getReader() {
-		/* TO BE COMPLETED */
+		return reader;
 	}
 
 	/**
 	 * @param reader the reader to set
 	 */
 	public void setReader(Scanner reader) {
-		/* TO BE COMPLETED */
+		this.reader = reader;
 	}
 
 	/**
 	 * @return the chosenPath
 	 */
 	public int getChosenPath() {
-		/* TO BE COMPLETED */
+		return chosenPath;
 	}
 
 	/**
 	 * @param chosenPath the chosenPath to set
 	 */
 	public void setChosenPath(int chosenPath) {
-		/* TO BE COMPLETED */
+		this.chosenPath = chosenPath;
 	}
 
 	/* Methods */
@@ -65,7 +85,8 @@ public class Event extends NodeMultiple {
 	 * @see pracHDVELH.NodeMultiple#getData()
 	 */
 	public String getData() {
-		/* TO BE COMPLETED */
+		// There should be a better way to handle this
+		return (String) super.getData();
 	}
 
 	/**
@@ -73,7 +94,7 @@ public class Event extends NodeMultiple {
 	 * @param data
 	 */
 	public void setData(String data) {
-		/* TO BE COMPLETED */
+		super.setData(data);
 	}
 
 	/**
@@ -81,7 +102,7 @@ public class Event extends NodeMultiple {
 	 */
 	@Override
 	public Event getDaughter(int i) {
-		/* TO BE COMPLETED */
+		return (Event) super.getDaughter(i);
 	}
 
 	/**
@@ -90,14 +111,14 @@ public class Event extends NodeMultiple {
 	 * @param i
 	 */
 	public void setDaughter(Event daughter, int i) {
-		/* TO BE COMPLETED */
+		super.setDaughter(daughter, i);
 	}
 
 	/**
 	 * @return the gui
 	 */
 	public GUIManager getGui() {
-		/* TO BE COMPLETED */
+		return guiManager;
 	}
 
 	/**
@@ -105,17 +126,92 @@ public class Event extends NodeMultiple {
 	 */
 	public void setGui(GUIManager gui) {
 		/* TO BE COMPLETED */
+		guiManager = gui;
 	}
 
 	/**
 	 * @return the id
 	 */
 	public int getId() {
-		/* TO BE COMPLETED */
+		return Id;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("Event #[%d] (%s): [%s]",getId(), getClass().toString(), getData().toString());
+	}
+	
+	/**
+	 * @return Whether this is the final event (no next events)
+	 */
+	public boolean isFinal() {
+		return hasDaughters();
+	}
+	
+	/**
+	 * @param index
+	 * @return Whether the input corresponds to a daughter
+	 */
+	public boolean isInRange(int index) {
+		return (index >= 0 && index < getDaughters().length) && getDaughter(index) != null;
+	}
+	
+	/**
+	 * Get the player answer and interpret it
+	 * @return The index leading to the next event int the daughters
+	 */
+	public int interpretAnswer() {
+		int playerInput = 0;
+		
+		boolean validAnswer = false;
+		while(!validAnswer) {
+			// Ask the user for an input
+			guiManager.output(PROMPT_ANSWER);
+			
+			// Get the answer from the player, assume it is an int
+			playerAnswer = reader.next();
+			try {
+				playerInput = Integer.valueOf(playerAnswer) -1;
+			}catch(NumberFormatException e) {
+				//Kinda expected when the user start doing dogshit
+				guiManager.output(WARNING_MSG_INTEGER_EXPECTED);
+			}
+			
+			
+			//Check the range
+			if(!isInRange(playerInput)) {
+				guiManager.output(WARNING_MSG_INTEGER_EXPECTED);
+				continue;
+			}
+			
+			validAnswer = true;
+		}
+		
+		return playerInput;
 	}
 
 	/* Methods */
 	/* TO BE COMPLETED */
+	
+	public void run() {
+		// Display the event content
+		guiManager.outputln(getData());
+		
+		// Stop if this is the end of the story
+		if(!hasDaughters()) return;
+		
+		//Wait for the next input and process the event
+		chosenPath = interpretAnswer();
+		
+		//Get and execute the next event if available
+		Event nextEvent = getDaughter(chosenPath);
+		if(nextEvent == null) {
+			guiManager.output(ERROR_MSG_UNEXPECTED_END);
+			return;
+		}
+		
+		nextEvent.run();
+	}
 	
 }
 
