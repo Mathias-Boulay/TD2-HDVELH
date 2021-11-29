@@ -82,8 +82,6 @@ public class Scenario {
 		event4.addDaughter(event2);
 		event4.addDaughter(endEvent);
 		event4.addDaughter(event3); */
-
-		//System.out.println(scenario.run());
 		
 		Event event1 = new Event(gui, "Hello there, can you press 1 ?");
 		Event event2 = new Event(gui, "I guess we went far enough for this random test, maybe make a better story next time");
@@ -96,22 +94,26 @@ public class Scenario {
 		System.out.println(event1);
 		
 		//Let's go !
-		scenario.run();
+		System.out.println(scenario.run());
 	}
 	
 	/**
 	 * Pretty much start the story
 	 * And also the end 
 	 */
-	private void run() {
+	private String run() {
 		if(head == null) {
-			gui.output(MSG_EMPTY_SCENARIO);
-			return;
+			return MSG_EMPTY_SCENARIO;
 		}
-		head.run();
+		
+		// Progress the story
+		Event currentEvent = head;
+		while(currentEvent != null) {
+			currentEvent = currentEvent.run();
+		}
 		
 		// End of the story
-		gui.output(MSG_FINALE);
+		return MSG_FINALE;
 	}
 }
 

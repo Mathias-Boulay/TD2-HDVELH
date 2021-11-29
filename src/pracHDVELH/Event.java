@@ -145,7 +145,7 @@ public class Event extends NodeMultiple {
 	 * @return Whether this is the final event (no next events)
 	 */
 	public boolean isFinal() {
-		return hasDaughters();
+		return !hasDaughters();
 	}
 	
 	/**
@@ -165,10 +165,7 @@ public class Event extends NodeMultiple {
 		
 		boolean validAnswer = false;
 		while(!validAnswer) {
-			// Ask the user for an input
-			guiManager.output(PROMPT_ANSWER);
-			
-			// Get the answer from the player, assume it is an int
+			// Get the answer from the player
 			playerAnswer = reader.next();
 			try {
 				playerInput = Integer.valueOf(playerAnswer) -1;
@@ -193,12 +190,15 @@ public class Event extends NodeMultiple {
 	/* Methods */
 	/* TO BE COMPLETED */
 	
-	public void run() {
+	public Event run() {
 		// Display the event content
-		guiManager.outputln(getData());
+		guiManager.outputln(this.toString());
 		
 		// Stop if this is the end of the story
-		if(!hasDaughters()) return;
+		if(isFinal()) return null;
+		
+		// Visually ask the user for an input
+		guiManager.output(PROMPT_ANSWER);
 		
 		//Wait for the next input and process the event
 		chosenPath = interpretAnswer();
@@ -207,10 +207,11 @@ public class Event extends NodeMultiple {
 		Event nextEvent = getDaughter(chosenPath);
 		if(nextEvent == null) {
 			guiManager.output(ERROR_MSG_UNEXPECTED_END);
-			return;
+			return null;
 		}
 		
-		nextEvent.run();
+		// Return the next event
+		return nextEvent;
 	}
 	
 }
