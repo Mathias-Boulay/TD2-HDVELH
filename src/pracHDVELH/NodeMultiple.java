@@ -21,7 +21,7 @@ public class NodeMultiple {
 	/* Overridden methods */
 	@Override
 	public String toString() {
-		/* TO BE COMPLETED */
+		return 	"NODE_MAX_ARITY= " + NODE_MAX_ARITY + "\n data= " + data.toString();
 	}
 
 	/* Getters/Setters */
@@ -34,7 +34,12 @@ public class NodeMultiple {
 	 * @return the {@code i}th daughter node, or {@code null} if it does not exist.
 	 */
 	public NodeMultiple getDaughter(int i) {
-		/* TO BE COMPLETED */
+		if(i < 0 || i > daughters.length) {
+			System.out.println(ERROR_MSG_INDEX_OUT_OF_RANGE);
+			return null;
+		}
+		return daughters[i];
+		
 	}
 
 	/**
@@ -52,21 +57,27 @@ public class NodeMultiple {
 	 * @param i        the daughter node's index
 	 */
 	public void setDaughter(NodeMultiple daughter, int i) {
-		/* TO BE COMPLETED */
+		if(i < 0 || i > daughters.length) {
+			System.out.println(ERROR_MSG_INDEX_OUT_OF_RANGE);
+			return;
+		}
+		daughters[i] = daughter;
 	}
 
 	/**
 	 * @return all the daughters
 	 */
 	public NodeMultiple[] getDaughters() {
-		/* TO BE COMPLETED */
+		return daughters;
 	}
 
 	/**
 	 * @param daughters the daughters to set
 	 */
 	public void setDaughters(NodeMultiple[] daughters) {
-		/* TO BE COMPLETED */
+		// TODO Verify the input, I feel like this is broken somehow
+		this.daughters = daughters; 
+		System.arraycopy(daughters, 0, this.daughters, 0, Math.min(daughters.length, NODE_MAX_ARITY));
 	}
 
 	/**
@@ -77,22 +88,29 @@ public class NodeMultiple {
 	 * 
 	 * @param daughter
 	 */
-	public void addDaughter(NodeMultiple daughter) {
-		/* TO BE COMPLETED */
+	public void addDaughter(NodeMultiple daughter) {		
+		// Verify input
+		if(daughter == null) return;
+		
+		int j = 0;
+		while(j < NODE_MAX_ARITY && daughters[j] != null) {
+			++j;
+		}
+		daughters[j] = daughter; 
 	}
 
 	/**
 	 * @return the content data
 	 */
 	public Object getData() {
-		/* TO BE COMPLETED */
+		return data;
 	}
 
 	/**
 	 * @param data
 	 */
 	public void setData(Object data) {
-		/* TO BE COMPLETED */
+		this.data = data;
 	}
 
 	/**
@@ -100,7 +118,11 @@ public class NodeMultiple {
 	 *         daughter node.
 	 */
 	public boolean hasDaughters() {
-		/* TO BE COMPLETED */
+		for(NodeMultiple daughter : daughters) {
+			if( daughter == null) continue;
+			return true;
+		}
+		return false;
 	}
 
 	/* Constructors */
@@ -108,7 +130,7 @@ public class NodeMultiple {
 	 * Default constructor.
 	 */
 	public NodeMultiple() {
-		/* TO BE COMPLETED */
+		this(null);
 	}
 
 	/**
@@ -118,7 +140,8 @@ public class NodeMultiple {
 	 * @param data
 	 */
 	public NodeMultiple(Object data) {
-		/* TO BE COMPLETED */
+		this.data = data;
+		daughters = new NodeMultiple[NODE_MAX_ARITY];
 	}
 }
 
