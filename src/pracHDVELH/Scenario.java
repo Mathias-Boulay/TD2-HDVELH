@@ -41,7 +41,7 @@ public class Scenario {
 		// ***1
 		// **2.2
 		// ***S
-		/*
+		
 		Event startEvent = new Event(gui, "Go!\n" + "(1)1 (2)2");
 		Event event1 = new Event(gui, "event1:\n" + "(1)1.1 (2)1.2");
 		Event event2 = new Event(gui, "event2:\n" + "(1)2.1 (2)2.2");
@@ -60,7 +60,7 @@ public class Scenario {
 		// ***E
 		// ***event3
 
-		Event event3 = new EventExactSolution(gui, "Wizard: how much is worth pi?", "3.14159");
+		Event event3 = new EventExactSolution(gui, "Wizard: how much is worth pi?", "3.14");
 		event2.setData(event2.getData() + " (3)2.3");
 		event2.addDaughter(event3);
 		event3.addDaughter(endEvent);
@@ -74,15 +74,16 @@ public class Scenario {
 		// ****event3
 		// ...
 		
-		/*
+		
 		int[] mask = { 3, 6, 7 };
 		Event event4 = new EventRandomSolution(gui, "Random choice of the next event...", mask, "Dice rolling... Roll=",
 				"\nNext event is ");
 		event3.setDaughter(event4, 0);
 		event4.addDaughter(event2);
 		event4.addDaughter(endEvent);
-		event4.addDaughter(event3); */
+		event4.addDaughter(event3); 
 		
+		/*
 		Event event1 = new Event(gui, "Hello there, can you press 1 ?");
 		Event event2 = new Event(gui, "I guess we went far enough for this random test, maybe make a better story next time");
 		event1.setDaughter(event2, 0);
@@ -92,6 +93,7 @@ public class Scenario {
 		scenario = new Scenario(gui, event1);
 		
 		System.out.println(event1);
+		*/
 		
 		//Let's go !
 		System.out.println(scenario.run());

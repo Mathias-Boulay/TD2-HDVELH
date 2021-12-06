@@ -15,17 +15,15 @@ public class EventExactSolution extends Event {
 	
 	/**
 	 * Ask for one precise answer.
-	 * @return 0 if good answer, 1 otherwise
+	 * @return 0 if good answer, 1 otherwise.
 	 */
 	@Override
 	public int interpretAnswer() {
 		//TODO that's far from robust my boy ! And no input checking ?
-		
-		// Ask the user for an input
-		getGui().output(PROMPT_ANSWER);
+		//I mean, generics could help in making this shit a bit more robust
 		
 		setPlayerAnswer(getReader().next());
 		
-		return getPlayerAnswer() == exactAnswer ? 0 : 1;
+		return getPlayerAnswer().equals(exactAnswer) ? 0 : 1;
 	} 
 }

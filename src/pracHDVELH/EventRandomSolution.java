@@ -28,7 +28,47 @@ public class EventRandomSolution extends Event {
 		this.waitingMsg = waitingMsg;
 		this.solutionAnnoucement = solutionAnnoucement;
 		
-		//TODO check inputs now ?
+		//TODO check inputs now 
+		if(!isPartitionValid()) {
+			manager.output(ERROR_MSG_BAD_SETTINGS);
+		}
+		
+		// The number of faces should be the highest possible number
+		dice = this.partition[partition.length - 1];
+		randomGenerator = new Random();
+		randomSolution = DEFAULT_RANDOM_SOLUTION;
+	}
+	
+	@Override
+	public int interpretAnswer() {
+		int solution = DEFAULT_RANDOM_SOLUTION;
+		
+		// Roll the solution
+		randomSolution = randomGenerator.nextInt(dice);
+		getGui().output(waitingMsg + randomSolution);
+		
+		// Lookup the equivalent event entry
+		for(int i=0; i< partition.length; ++i) {
+			if(partition[i] >= randomSolution) return i;
+		}
+				
+		getGui().output(solutionAnnoucement + solution);
+		
+		return solution;
+	}
+	
+	/**
+	 * @return Whether the partition is valid. 
+	 * Doesn't account for negative values as of now.
+	 */
+	private boolean isPartitionValid() {
+		if(partition.length == 1) return true;
+		
+		for(int i=0; i < partition.length -1; ++i) {
+			if (partition[i] >= partition[i+1]) return false;
+		}
+		
+		return true;
 	}
 
 }
